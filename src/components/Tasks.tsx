@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
-import { Button, Modal } from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.css';
-import TaskForm from './TaskForm';
+import FullCalendar, { EventClickArg } from '@fullcalendar/react';
+import dayGridPlugin from '@fullcalendar/daygrid';
+import interactionPlugin, { DateClickArg } from '@fullcalendar/interaction';
+import EventContent from './EventContent';
+import TaskModal from './TaskModal';
 
 type Task = {
   title: string,
@@ -20,9 +24,13 @@ function Tasks() {
     status: '1',
   });
 
-  const [show, setShow] = useState(false);
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+  const [showCreate, setShowCreate] = useState(false);
+  const handleCloseCreate = () => setShowCreate(false);
+  const handleShowCreate = () => setShowCreate(true);
+
+  const [showUpdate, setShowUpdate] = useState(false);
+  const handleCloseUpdate = () => setShowUpdate(false);
+  const handleShowUpdate = () => setShowUpdate(true);
 
   function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
     const target = event.target;
@@ -42,37 +50,83 @@ function Tasks() {
     });
   }
 
-  function handleSubmit(event: React.ChangeEvent<SubmitEvent>) {
+  function handleSubmitCreate(event: React.ChangeEvent<SubmitEvent>) {
     event.preventDefault();
     alert(`${form.title} ${form.description} ${form.startdate} ${form.enddate} ${form.status}`);
-    handleClose();
+    handleCloseCreate();
+  }
+
+  function handleSubmitUpdate(event: React.ChangeEvent<SubmitEvent>) {
+    event.preventDefault();
+    alert(`${form.title} ${form.status}`);
+    handleCloseUpdate();
+  }
+
+  function handleDateClick(arg: DateClickArg) {
+    setForm({
+      title: '',
+      description: '',
+      startdate: arg.dateStr,
+      enddate: '',
+      status: '1',
+    });
+    handleShowCreate();
+  }
+
+  function handleEventClick(info: EventClickArg) {
+    handleShowUpdate();
   }
 
   return (
     <div>
-      <Button variant="primary" onClick={handleShow}>
+      <Button variant="primary" onClick={handleShowCreate}>
         New Task
       </Button>
 
-      <Modal show={show} onHide={handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>Create Task</Modal.Title>
-        </Modal.Header>
+      <FullCalendar
+        plugins={[dayGridPlugin, interactionPlugin]}
+        initialView='dayGridMonth'
+        dateClick={handleDateClick}
+        eventContent={EventContent}
+        events={[
+          { title: 'Event 1', date: '2022-07-01', status: '1' },
+          { title: 'Event 2', start: '2022-07-02', end: '2022-07-03', status: '2' },
+          { title: 'Event 3', start: '2022-06-30', end: '2022-07-05', description: 'Lecture', status: '3' },
+        ]}
+        eventClick={handleEventClick}
+      />
 
-        <Modal.Body>
-          <TaskForm
-            title={form.title}
-            description={form.description}
-            startdate={form.startdate}
-            enddate={form.enddate}
-            status={form.status}
-            isUpdate={false}
-            handleChange={handleChange}
-            handleSubmit={handleSubmit}
-            handleSelectChange={handleSelectChange}
-          />
-        </Modal.Body>
-      </Modal>
+      <TaskModal
+        title={form.title}
+        description={form.description}
+        startdate={form.startdate}
+        enddate={form.enddate}
+        status={form.status}
+        isUpdate={false}
+        show={showCreate}
+        modalTitle={'Create Task'}
+        handleClose={handleCloseCreate}
+        handleShow={handleShowCreate}
+        handleChange={handleChange}
+        handleSubmit={handleSubmitCreate}
+        handleSelectChange={handleSelectChange}
+      />
+
+      <TaskModal
+        title={form.title}
+        description={form.description}
+        startdate={form.startdate}
+        enddate={form.enddate}
+        status={form.status}
+        isUpdate={true}
+        show={showUpdate}
+        modalTitle={'Update Task'}
+        handleClose={handleCloseUpdate}
+        handleShow={handleShowUpdate}
+        handleChange={handleChange}
+        handleSubmit={handleSubmitUpdate}
+        handleSelectChange={handleSelectChange}
+      />
     </div>
   )
 }
