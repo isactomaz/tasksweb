@@ -4,8 +4,7 @@ function EventContent(eventInfo: EventContentArg) {
   return (
     <div>
       <b>{eventInfo.event.title}</b>
-      <i>{eventInfo.event.extendedProps.description}</i>
-      {eventInfo.event.extendedProps.status}
+      <i> {eventInfo.event.extendedProps.description}</i>
     </div>
   )
 }

@@ -1,11 +1,13 @@
 import { Button, Form } from 'react-bootstrap';
 
 type TaskProps = {
-  title: string,
-  description: string,
-  startdate: string,
-  enddate: string,
-  status: string,
+  task: {
+    title: string,
+    description: string,
+    startdate: string,
+    enddate: string,
+    status: string,
+  },
   isUpdate: boolean,
   handleChange: any,
   handleSubmit: any,
@@ -23,7 +25,7 @@ function TaskForm(props: TaskProps) {
             type='text'
             placeholder='Enter title'
             required
-            defaultValue={props.title}
+            defaultValue={props.task.title}
             disabled={props.isUpdate}
             readOnly={props.isUpdate}
             onChange={props.handleChange}
@@ -37,7 +39,7 @@ function TaskForm(props: TaskProps) {
             type='text'
             placeholder='Enter description'
             required
-            defaultValue={props.description}
+            defaultValue={props.task.description}
             disabled={props.isUpdate}
             readOnly={props.isUpdate}
             onChange={props.handleChange}
@@ -51,7 +53,7 @@ function TaskForm(props: TaskProps) {
             type='date'
             placeholder='Enter date'
             required
-            defaultValue={props.startdate}
+            defaultValue={props.task.startdate}
             disabled={props.isUpdate}
             readOnly={props.isUpdate}
             onChange={props.handleChange}
@@ -65,7 +67,7 @@ function TaskForm(props: TaskProps) {
             type='date'
             placeholder='Enter date'
             required
-            defaultValue={props.enddate}
+            defaultValue={props.task.enddate}
             disabled={props.isUpdate}
             readOnly={props.isUpdate}
             onChange={props.handleChange}
@@ -75,7 +77,7 @@ function TaskForm(props: TaskProps) {
         <Form.Group className='formGroup' controlId={'formTaskStatus'}>
           <Form.Label>Status</Form.Label>
           <Form.Select
-            defaultValue={props.status}
+            defaultValue={props.task.status}
             onChange={props.handleSelectChange}
           >
             <option value='1'>Pending</option>
